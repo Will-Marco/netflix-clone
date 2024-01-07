@@ -5,6 +5,8 @@ import { hash } from "bcryptjs";
 
 export const dynamic = "force-dynamic";
 
+// Create a new account
+
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
@@ -37,6 +39,63 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: false,
       message: "Something went wrong\n" + e,
+    });
+  }
+}
+
+// Get all accounts
+
+export async function GET(req: Request) {
+  try {
+    await connectToDatabase();
+
+    const { searchParams } = new URL(req.url);
+    const uid = searchParams.get("uid");
+
+    if (!uid) {
+      return NextResponse.json({
+        success: false,
+        message: "Account ID is not found",
+      });
+    }
+
+    const accounts = await Account.findOne({ uid });
+
+    return NextResponse.json({ success: true, accounts });
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      message: "Something went wrong\n" + error,
+    });
+  }
+}
+
+// Delete an account
+
+export async function DELETE(req: Request) {
+  try {
+    await connectToDatabase();
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({
+        success: false,
+        message: "Account ID is not found",
+      });
+    }
+
+    await Account.findOneAndDelete({ id });
+
+    return NextResponse.json({
+      success: true,
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      message: "Something went wrong\n" + error,
     });
   }
 }

@@ -9,12 +9,17 @@ import { AccountResponse, AccountProps } from "@/types";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { toast } from "../ui/use-toast";
+import { Skeleton } from "../ui/skeleton";
 
 const ManageAccount = () => {
   const [isDelete, setIsDelete] = useState<boolean>(true);
   const [open, setOpen] = useState<boolean>(false);
   const [state, setState] = useState<"login" | "create">("create");
   const [accounts, setAccounts] = useState<AccountProps[]>([]);
+  const [cuttentAccount, setCuttentAccount] = useState<AccountProps | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
 
   const { data: session }: any = useSession();
 
@@ -24,7 +29,6 @@ const ManageAccount = () => {
         const { data } = await axios.get<AccountResponse>(
           `/api/account?uid=${session.user.uid}`
         );
-        console.log(data);
         data.success && setAccounts(data.data as AccountProps[]);
       } catch (error) {
         return toast({
@@ -32,6 +36,8 @@ const ManageAccount = () => {
           description: "An error occurred while fetching your accounts",
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -61,7 +67,7 @@ const ManageAccount = () => {
           });
         }
       }
-    } catch (e) {
+    } catch (error) {
       return toast({
         title: "Error",
         description: "An error occurred while deleting your account",
@@ -77,54 +83,64 @@ const ManageAccount = () => {
           Who&apos;s Watching?
         </h1>
         <ul className="my-12 p-0 flex">
-          {accounts.map((account) => (
-            <li
-              key={account._id}
-              onClick={() => {
-                if (!isDelete) return;
-                setOpen(true);
-                setState("login");
-              }}
-              className="max-w-[200px] min-w-[200px] w-[155px] flex flex-col items-center gap-3 cursor-pointer"
-            >
-              <div className="relative">
-                <div className="w-[155px] h-[155px] max-w-[200px] min-w-[84px] max-h-[200px] min-h-[84px] relative object-cover rounded">
-                  <Image
-                    src={
-                      "https://occ-0-2611-3663.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABfNXUMVXGhnCZwPI1SghnGpmUgqS_J-owMff-jig42xPF7vozQS1ge5xTgPTzH7ttfNYQXnsYs4vrMBaadh4E6RTJMVepojWqOXx.png?r=1d4"
-                    }
-                    alt="account"
-                    fill
-                    sizes="1"
-                  />
-                </div>
-                {!isDelete ? (
-                  <div
-                    className={"absolute bottom-0 z-10 cursor-pointer"}
-                    onClick={() => onDelete(account._id)}
+          {isLoading ? (
+            [1, 2, 3, 4].map((_, i) => (
+                <Skeleton key={i} className="w-[155px] h-[200px] max-w-[200px] min-w-[200px] mx-2" />
+            ))
+          ) : (
+            <>
+              {accounts &&
+                accounts.map((account) => (
+                  <li
+                    key={account._id}
+                    onClick={() => {
+                      if (!isDelete) return;
+                      setOpen(true);
+                      setState("login");
+                      setCuttentAccount(account);
+                    }}
+                    className="max-w-[200px] min-w-[200px] w-[155px] flex flex-col items-center gap-3 cursor-pointer"
                   >
-                    <Trash2 className={"w-8 h-8 text-red-600"} />
-                  </div>
-                ) : null}
-              </div>
-              <div className={"flex items-center gap-1"}>
-                <span className={"font-mono font-bold text-xl"}>
-                  {account.name}
-                </span>
-                <LockKeyhole />
-              </div>
-            </li>
-          ))}
-          {accounts && accounts.length < 4 ? (
-            <li
-              onClick={() => {
-                setOpen(true), setState("create");
-              }}
-              className="w-[155px] h-[155px] max-w-[200px] min-w-[84px] max-h-[200px] min-h-[84px] flex justify-center items-center bg-[#e5b109] text-xl font-bold border rounded border-black cursor-pointer"
-            >
-              Add account
-            </li>
-          ) : null}
+                    <div className="relative">
+                      <div className="w-[155px] h-[155px] max-w-[200px] min-w-[84px] max-h-[200px] min-h-[84px] relative object-cover rounded">
+                        <Image
+                          src={
+                            "https://occ-0-2611-3663.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABfNXUMVXGhnCZwPI1SghnGpmUgqS_J-owMff-jig42xPF7vozQS1ge5xTgPTzH7ttfNYQXnsYs4vrMBaadh4E6RTJMVepojWqOXx.png?r=1d4"
+                          }
+                          alt="account"
+                          fill
+                          sizes="1"
+                        />
+                      </div>
+                      {!isDelete ? (
+                        <div
+                          className={"absolute bottom-0 z-10 cursor-pointer"}
+                          onClick={() => onDelete(account._id)}
+                        >
+                          <Trash2 className={"w-8 h-8 text-red-600"} />
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className={"flex items-center gap-1"}>
+                      <span className={"font-mono font-bold text-xl"}>
+                        {account.name}
+                      </span>
+                      <LockKeyhole />
+                    </div>
+                  </li>
+                ))}
+              {accounts && accounts.length < 4 ? (
+                <li
+                  onClick={() => {
+                    setOpen(true), setState("create");
+                  }}
+                  className="w-[155px] h-[155px] max-w-[200px] min-w-[84px] max-h-[200px] min-h-[84px] flex justify-center items-center bg-[#e5b109] text-xl font-bold border rounded border-black cursor-pointer"
+                >
+                  Add account
+                </li>
+              ) : null}
+            </>
+          )}
         </ul>
         <Button
           onClick={() => setIsDelete((prev) => !prev)}
@@ -136,7 +152,9 @@ const ManageAccount = () => {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
-          {state === "login" && <LoginAccountForm />}
+          {state === "login" && (
+            <LoginAccountForm cuttentAccount={cuttentAccount} />
+          )}
           {state === "create" && (
             <CreateAccountForm
               uid={session?.user?.uid}

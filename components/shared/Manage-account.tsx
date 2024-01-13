@@ -9,7 +9,7 @@ import { AccountResponse, AccountProps } from "@/types";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { toast } from "../ui/use-toast";
-import { Skeleton } from "../ui/skeleton";
+import Loader from "./Loader";
 
 const ManageAccount = () => {
   const [isDelete, setIsDelete] = useState<boolean>(true);
@@ -76,6 +76,8 @@ const ManageAccount = () => {
     }
   };
 
+  if (isLoading) return <Loader />;
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center relative">
       <div className="flex flex-col justify-center items-center">
@@ -83,11 +85,7 @@ const ManageAccount = () => {
           Who&apos;s Watching?
         </h1>
         <ul className="my-12 p-0 flex">
-          {isLoading ? (
-            [1, 2, 3, 4].map((_, i) => (
-                <Skeleton key={i} className="w-[155px] h-[200px] max-w-[200px] min-w-[200px] mx-2" />
-            ))
-          ) : (
+          {isLoading ? null : (
             <>
               {accounts &&
                 accounts.map((account) => (

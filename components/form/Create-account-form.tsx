@@ -1,6 +1,6 @@
 import { createAccountSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import {
@@ -15,8 +15,23 @@ import {
 import { Input } from "../ui/input";
 import PinInput from "react-pin-input";
 import { Button } from "../ui/button";
+import axios from "axios";
+import { AccountProps, AccountResponse } from "@/types";
+import { toast } from "../ui/use-toast";
 
-const CreateAccountForm = () => {
+interface PropsType {
+  uid: string;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  setAccounts: Dispatch<SetStateAction<AccountProps[]>>;
+  accounts: AccountProps[];
+}
+
+const CreateAccountForm = ({
+  uid,
+  setOpen,
+  setAccounts,
+  accounts,
+}: PropsType) => {
   const form = useForm<z.infer<typeof createAccountSchema>>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: { name: "", pin: "" },
@@ -24,8 +39,35 @@ const CreateAccountForm = () => {
 
   const { isSubmitting } = form.formState;
 
-  async function isSubmit(values: z.infer<typeof createAccountSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof createAccountSchema>) {
+    try {
+      const { data } = await axios.post<AccountResponse>("/api/account", {
+        ...values,
+        uid,
+      });
+      if (data.success) {
+        setOpen(false);
+        form.reset();
+        setAccounts([...accounts, data.data as AccountProps]);
+        return toast({
+          title: "Account created successfully",
+          description: "Your account has been created successfully",
+        });
+      } else {
+        return toast({
+          title: "Error",
+          description: data.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.log(error);     
+      return toast({
+        title: "Error",
+        description: error as string,
+        variant: "destructive",
+      });
+    }
   }
 
   return (
@@ -35,7 +77,7 @@ const CreateAccountForm = () => {
       </h1>
       <hr className="w-full h-2 mb-2" />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(isSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}
             name={"name"}

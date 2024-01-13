@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     const account = await Account.create({ name, pin: hashPin, uid });
 
-    return NextResponse.json({ account });
+    return NextResponse.json({ success: true, data: account });
   } catch (e) {
     return NextResponse.json({
       success: false,
@@ -59,9 +59,9 @@ export async function GET(req: Request) {
       });
     }
 
-    const accounts = await Account.findOne({ uid });
+    const accounts = await Account.find({ uid });
 
-    return NextResponse.json({ success: true, accounts });
+    return NextResponse.json({ success: true, data: accounts });
   } catch (error) {
     return NextResponse.json({
       success: false,

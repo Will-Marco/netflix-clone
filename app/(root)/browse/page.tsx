@@ -1,8 +1,6 @@
 "use client";
 
-import Loader from "@/components/shared/Loader";
-import Login from "@/components/shared/Login";
-import ManageAccount from "@/components/shared/Manage-account";
+import { Common, Loader, Login, ManageAccount } from "@/components/shared";
 import { useGlobalContext } from "@/hook";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
@@ -19,7 +17,7 @@ const Page = () => {
   if (account === null) return <ManageAccount />;
   if (pageLoader) return <Loader />;
 
-  return <div>Browse Page</div>;
+  return <Common />;
 };
 
 export default Page;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { MenuItem } from "@/constants";
 import SearchBar from "./Search-bar";
@@ -9,11 +9,26 @@ import { Popover, PopoverContent } from "@/components/ui/popover";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { useGlobalContext } from "@/hook";
 import { signOut } from "next-auth/react";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const [showSearchBar, setShowSearchBar] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const { account, setAccount } = useGlobalContext();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  });
 
   const logout = () => {
     sessionStorage.removeItem("account");
@@ -23,7 +38,7 @@ export default function Navbar() {
 
   return (
     <div className="relative">
-      <header className="h-[10vh] header hover:bg-black transition-all duration-100">
+      <header className={cn("h-[10vh] header hover:bg-black transition-all duration-400 ease-in-out", isScrolled && "bg-black")}>
         <div className="h-full flex items-center space-x-2 md:space-x-10">
           <Image
             src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"

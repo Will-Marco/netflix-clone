@@ -4,7 +4,7 @@ import { Common, Loader, Login, ManageAccount } from "@/components/shared";
 import { useGlobalContext } from "@/hook";
 import {
   getPopularMovies,
-  getTopratedMovies,
+  getTopRatedMovies,
   getTrendingMovies,
 } from "@/lib/api";
 import { MovieDataProps, MovieProps } from "@/types";
@@ -28,11 +28,11 @@ const Page = () => {
           popularMovie,
         ] = await Promise.all([
           getTrendingMovies("tv"),
-          getTopratedMovies("tv"),
+          getTopRatedMovies("tv"),
           getPopularMovies("tv"),
 
           getTrendingMovies("movie"),
-          getTopratedMovies("movie"),
+          getTopRatedMovies("movie"),
           getPopularMovies("movie"),
         ]);
 

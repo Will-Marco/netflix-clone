@@ -8,13 +8,13 @@ export const getTrendingMovies = async (type: string) => {
     const { data } = await axios.get(
       `${BASE_URL}/trending/${type}/day?api_key=${API_KEY}&language=en-US`
     );
-    return data && data.result;
+    return data && data.results;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getTopratedMovies = async (type: string) => {
+export const getTopRatedMovies = async (type: string) => {
   try {
     const { data } = await axios.get(
       `${BASE_URL}/${type}/top_rated?api_key=${API_KEY}&language=en-US`

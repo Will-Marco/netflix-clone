@@ -10,13 +10,15 @@ import { PopoverTrigger } from "@radix-ui/react-popover";
 import { useGlobalContext } from "@/hook";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const { account, setAccount } = useGlobalContext();
-
+  const { account, setAccount, setPageLoader } = useGlobalContext();
+  const router = useRouter();
+ 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
@@ -38,7 +40,12 @@ export default function Navbar() {
 
   return (
     <div className="relative">
-      <header className={cn("h-[10vh] header hover:bg-black transition-all duration-400 ease-in-out", isScrolled && "bg-black")}>
+      <header
+        className={cn(
+          "h-[10vh] header hover:bg-black transition-all duration-400 ease-in-out",
+          isScrolled && "bg-black"
+        )}
+      >
         <div className="h-full flex items-center space-x-2 md:space-x-10">
           <Image
             src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
@@ -51,6 +58,10 @@ export default function Navbar() {
             {MenuItem.map((item) => (
               <li
                 key={item.path}
+                onClick={() => {
+                  router.push(item.path);
+                  setPageLoader(true);
+                }}
                 className="text-[18px] text-[#e5e5e5] cursor-pointer transition duration-[.4s] hover:text-[#b3b3b3]"
               >
                 {item.title}

@@ -2,15 +2,19 @@
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useGlobalContext } from "@/hook";
-import { getMovieDetails } from "@/lib/api";
-import { MovieDetailsProps } from "@/types";
+import { getMovieDetails, getSimilarMovie } from "@/lib/api";
+import { MovieDetailsProps, MovieProps } from "@/types";
 import React, { useEffect, useState } from "react";
+import ReactPlayer from "react-player";
 import ReactStars from "react-stars";
+import MovieItem from "./Movie-item";
 
 export default function MoviePopup() {
   const [movieDetails, setMovieDetails] = useState<MovieDetailsProps | null>(
     null
   );
+  const [similarMovies, setSimilarMovies] = useState<MovieProps[]>([]);
+  const [key, setKey] = useState<string>();
 
   const { open, setOpen, movie } = useGlobalContext();
 
@@ -21,19 +25,63 @@ export default function MoviePopup() {
           movie?.type,
           movie?.id
         );
-        setMovieDetails(extractMovieDetails);
+        const similarMovie = await getSimilarMovie(movie?.type, movie?.id);
+        const results = similarMovie.map((movie: MovieProps[]) => ({
+          ...movie,
+          type: extractMovieDetails?.type,
+          addedToFavorites: false,
+        }));
+       
+        setMovieDetails(extractMovieDetails?.data);
+        setSimilarMovies(results);
+
+        const findIndexOfTrailer = extractMovieDetails?.data?.videos?.results
+          ?.length
+          ? extractMovieDetails?.data?.videos?.results?.findIndex(
+              (item: { type: string }) => item.type === "Trailer"
+            )
+          : -1;
+        const findIndexOfClip = extractMovieDetails?.data?.videos?.results
+          ?.length
+          ? extractMovieDetails?.data?.videos?.results?.findIndex(
+              (item: { type: string }) => item.type === "Clip"
+            )
+          : -1;
+        const key =
+          findIndexOfTrailer !== -1
+            ? extractMovieDetails?.data?.videos?.results[findIndexOfTrailer]?.key
+            : findIndexOfClip !== -1
+            ? extractMovieDetails?.data?.videos?.results[findIndexOfClip]?.key
+            : null;
+
+        setKey(key);
       } catch (error) {
         console.log(error);
       }
     };
 
-    getMovie();
-  }, [movie, open]);
+    if (movie !== null) {
+      getMovie();
+    }
+  }, [movie]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className={"max-w-4xl"}>
-        <div className={"w-full h-56 bg-black"}></div>
+      <DialogContent
+        className={
+          "max-w-6xl max-h-[90vh] overflow-y-auto !scrollbar-thin !scrollbar-track-transparent !scrollbar-thumb-red-600"
+        }
+      >
+        <div className={"pt-[56.25%] relative"}>
+          <ReactPlayer
+            url={`https://www.youtube.com/watch?v=${key}`}
+            width={"100%"}
+            height={"100%"}
+            style={{ position: "absolute", top: "0", left: "0" }}
+            playing
+            controls
+          />
+        </div>
 
         <div className={"flex flex-col space-y-4"}>
           <h1
@@ -62,6 +110,21 @@ export default function MoviePopup() {
             <div className="px-2 inline-flex border-2 border-white/40 text-green-400 font-semibold rounded ">
               HD
             </div>
+          </div>
+        </div>
+        <div className="p-4 bg-black rounded-md shadow-2xl">
+          <h2 className="mt-2 mb-6 cursor-pointer text-sm font-semibold text-[#e5e5e5] transition-colors duration-200 hover:text-white md:text-2xl">
+            More Like This
+          </h2>
+          <div className="md:p-2 grid grid-cols-4 items-center gap-3 scrollbar-hide">
+            {similarMovies &&
+              similarMovies.length &&
+              similarMovies
+                .filter(
+                  (item) =>
+                    item.backdrop_path !== null && item.poster_path !== null
+                )
+                .map((movie) => <MovieItem key={movie.id} movie={movie} />)}
           </div>
         </div>
       </DialogContent>

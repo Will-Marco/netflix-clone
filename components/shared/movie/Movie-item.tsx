@@ -10,7 +10,7 @@ interface Props {
 
 export default function MovieItem({ movie }: Props) {
   const { setOpen, setMovie } = useGlobalContext();
-
+  
   const onHandlePopup = () => {
     setMovie(movie);
     setOpen(true);

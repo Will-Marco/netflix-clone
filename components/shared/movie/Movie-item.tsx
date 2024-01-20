@@ -3,6 +3,7 @@ import { MovieProps } from "@/types";
 import { motion } from "framer-motion";
 import { CheckIcon, ChevronDown, PlusIcon } from "lucide-react";
 import Image from "next/image";
+import CustomImage from "../Custom-image";
 
 interface Props {
   movie: MovieProps;
@@ -10,7 +11,7 @@ interface Props {
 
 export default function MovieItem({ movie }: Props) {
   const { setOpen, setMovie } = useGlobalContext();
-  
+
   const onHandlePopup = () => {
     setMovie(movie);
     setOpen(true);
@@ -27,14 +28,12 @@ export default function MovieItem({ movie }: Props) {
       }}
     >
       <div className="cardWrapper h-28 md:h-36 min-w-[180px] md:min-w-[260px] relative cursor-pointer transform transition duration-500 hover:scale-110 hover:z-[999]">
-        <Image
-          src={`${process.env.NEXT_PUBLIC_TMDB_IMAGE_BASE_URL}${
+        <CustomImage
+          image={`${process.env.NEXT_PUBLIC_TMDB_IMAGE_BASE_URL}${
             movie?.backdrop_path || movie?.poster_path
           }`}
           alt="Media"
-          fill
-          className=" object-cover rounded-sm md:rounded hover:rounded-sm"
-          onClick={onHandlePopup}
+          className="rounded-sm md:rounded hover:rounded-sm"
         />
 
         <div className="p-2 bottom-0 space-x-3 hidden absolute buttonWrapper">

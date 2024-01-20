@@ -1,13 +1,15 @@
 "use client";
 
 import { createContext, useEffect, useState } from "react";
-import { AccountProps, ChildProps, ContextType } from "@/types";
+import { AccountProps, ChildProps, ContextType, MovieProps } from "@/types";
 
 export const Context = createContext<ContextType | null>(null);
 
 export default function GlobalContext({ children }: ChildProps) {
   const [account, setAccount] = useState<AccountProps | null>(null);
   const [pageLoader, setPageLoader] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [movie, setMovie] = useState<MovieProps | null>(null)
 
   useEffect(() => {
     setAccount(JSON.parse(sessionStorage.getItem("account")!));
@@ -15,7 +17,7 @@ export default function GlobalContext({ children }: ChildProps) {
 
   return (
     <Context.Provider
-      value={{ account, setAccount, pageLoader, setPageLoader }}
+      value={{ account, setAccount, pageLoader, setPageLoader, open, setOpen, movie, setMovie }}
     >
       {children}
     </Context.Provider>

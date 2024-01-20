@@ -11,6 +11,7 @@ import { useGlobalContext } from "@/hook";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import MoviePopup from "../movie/Movie-popup";
 
 export default function Navbar() {
   const [showSearchBar, setShowSearchBar] = useState(false);
@@ -18,7 +19,7 @@ export default function Navbar() {
 
   const { account, setAccount, setPageLoader } = useGlobalContext();
   const router = useRouter();
- 
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
@@ -69,6 +70,8 @@ export default function Navbar() {
             ))}
           </ul>
         </div>
+
+        <MoviePopup />
 
         <div className="flex items-center space-x-4 text-sm ">
           {showSearchBar ? (

@@ -8,9 +8,15 @@ interface PropsType {
   image: string;
   alt: string;
   className: string;
+  onClick: () => void;
 }
 
-export default function CustomImage({ alt, className, image }: PropsType) {
+export default function CustomImage({
+  alt,
+  className,
+  image,
+  onClick,
+}: PropsType) {
   const [isLoading, setIsLoading] = useState(true);
   return (
     <Image
@@ -24,8 +30,10 @@ export default function CustomImage({ alt, className, image }: PropsType) {
         className
       )}
       fill
+      style={{ objectFit: "cover" }}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       onLoad={() => setIsLoading(false)}
+      onClick={onClick}
     />
   );
 }

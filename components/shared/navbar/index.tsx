@@ -8,19 +8,44 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { useGlobalContext } from "@/hook";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import MoviePopup from "../movie/Movie-popup";
+import { AccountProps, AccountResponse } from "@/types";
+import axios from "axios";
+import { toast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Navbar() {
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [accounts, setAccounts] = useState<AccountProps[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { account, setAccount, setPageLoader } = useGlobalContext();
+  const { data: session }: any = useSession();
   const router = useRouter();
 
   useEffect(() => {
+    const getAllAccounts = async () => {
+      setIsLoading(true);
+      try {
+        const { data } = await axios.get<AccountResponse>(
+          `/api/account?uid=${session.user.uid}`
+        );
+        data.success && setAccounts(data.data as AccountProps[]);
+      } catch (error) {
+        return toast({
+          title: "Error",
+          description: "An error occurred while fetching your accounts",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     const handleScroll = () => {
       if (window.scrollY > 100) {
         setIsScrolled(true);
@@ -29,9 +54,10 @@ export default function Navbar() {
       }
     };
 
+    getAllAccounts();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  });
+  }, []);
 
   const logout = () => {
     sessionStorage.removeItem("account");
@@ -95,6 +121,35 @@ export default function Navbar() {
               <p className="text-lg font-semibold">{account && account.name}</p>
             </PopoverTrigger>
             <PopoverContent>
+              {isLoading ? (
+                <div className={"flex flex-col space-y-4"}>
+                  {[1, 2].map((_, i) => (
+                    <Skeleton className={"w-full h-14"} key={i} />
+                  ))}
+                </div>
+              ) : (
+                accounts &&
+                accounts.map((account) => (
+                  <div
+                    className={
+                      "cursor-pointer flex gap-3 h-14 hover:bg-slate-800 rounded-md items-center px-4 py-2"
+                    }
+                    key={account._id}
+                    onClick={() => {
+                      setAccount(null);
+                      sessionStorage.removeItem("account");
+                    }}
+                  >
+                    <img
+                      src="https://occ-0-2611-3663.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABfNXUMVXGhnCZwPI1SghnGpmUgqS_J-owMff-jig42xPF7vozQS1ge5xTgPTzH7ttfNYQXnsYs4vrMBaadh4E6RTJMVepojWqOXx.png?r=1d4"
+                      alt="Current Profile"
+                      className="max-w-[30px] rounded min-w-[20px] max-h-[30px] min-h-[20px] object-cover w-[30px] h-[30px]"
+                    />
+                    <p>{account.name}</p>
+                  </div>
+                ))
+              )}
+
               <button
                 onClick={logout}
                 className="w-full h-[56px] mt-4 py-2 text-center text-sm border border-white/40 rounded-md hover:bg-slate-800"

@@ -34,6 +34,7 @@ export default function MovieItem({ movie }: Props) {
           }`}
           alt="Media"
           className="rounded-sm md:rounded hover:rounded-sm"
+          onClick={onHandlePopup}
         />
 
         <div className="p-2 bottom-0 space-x-3 hidden absolute buttonWrapper">

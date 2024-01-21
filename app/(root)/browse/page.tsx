@@ -3,18 +3,19 @@
 import { Common, Loader, Login, ManageAccount } from "@/components/shared";
 import { useGlobalContext } from "@/hook";
 import {
+  getFavorites,
   getPopularMovies,
   getTopRatedMovies,
   getTrendingMovies,
 } from "@/lib/api";
-import { MovieDataProps, MovieProps } from "@/types";
+import { FavouriteProps, MovieDataProps, MovieProps } from "@/types";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {
   const [moviesData, setMoviesData] = useState<MovieDataProps[]>([]);
   const { account, pageLoader, setPageLoader } = useGlobalContext();
-  const { data: session } = useSession();
+  const { data: session }: any = useSession();
 
   useEffect(() => {
     const getAllMovies = async () => {
@@ -26,6 +27,7 @@ const Page = () => {
           trendingMovie,
           topRatedMovie,
           popularMovie,
+          favourites,
         ] = await Promise.all([
           getTrendingMovies("tv"),
           getTopRatedMovies("tv"),
@@ -34,6 +36,8 @@ const Page = () => {
           getTrendingMovies("movie"),
           getTopRatedMovies("movie"),
           getPopularMovies("movie"),
+
+          getFavorites(session?.user?.uid, account?._id),
         ]);
 
         const tvShows: MovieDataProps[] = [
@@ -45,7 +49,11 @@ const Page = () => {
           data: item.data.map((movie: MovieProps) => ({
             ...movie,
             type: "tv",
-            addedToFavorites: false,
+            addedToFavorites: favourites.length
+              ? favourites
+                  .map((item: FavouriteProps) => item.movieId)
+                  .indexOf(movie.id)
+              : false,
           })),
         }));
 
@@ -58,7 +66,11 @@ const Page = () => {
           data: item.data.map((movie: MovieProps) => ({
             ...movie,
             type: "movie",
-            addedToFavorites: false,
+            addedToFavorites: favourites.length
+              ? favourites
+                  .map((item: FavouriteProps) => item.movieId)
+                  .indexOf(movie.id)
+              : false,
           })),
         }));
 
@@ -71,7 +83,7 @@ const Page = () => {
     };
 
     getAllMovies();
-  }, []);
+  }, [session]);
 
   if (session === null) return <Login />;
   if (account === null) return <ManageAccount />;

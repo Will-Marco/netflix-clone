@@ -18,7 +18,7 @@ export default function MovieItem({ movie }: Props) {
   const onHandlePopup = () => {
     setMovie(movie);
     setOpen(true);
-  };  
+  };
 
   const onAdd = async () => {
     try {
@@ -33,7 +33,18 @@ export default function MovieItem({ movie }: Props) {
         overview: movie?.overview,
       });
 
-      console.log(data);
+      if (data.success) {
+        return toast({
+          title: "Success",
+          description: "Movie added to your favourite list",
+        });
+      } else {
+        return toast({
+          title: "Error",
+          description: data.message,
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       return toast({
         title: "Error",
@@ -65,11 +76,7 @@ export default function MovieItem({ movie }: Props) {
 
         <div className="p-2 bottom-0 space-x-3 hidden absolute buttonWrapper">
           <button className="p-2 flex items-center gap-x-2 bg-black opacity-75 text-black text-sm font-semibold border border-white rounded-full  transition hover:opacity-90 cursor-pointer">
-            {movie?.addedToFavorites ? (
-              <CheckIcon color="#ffffff" className="h-7 w-7" />
-            ) : (
-              <PlusIcon color="#ffffff" className="h-7 w-7" onClick={onAdd} />
-            )}
+            <PlusIcon color="#ffffff" className="h-7 w-7" onClick={onAdd} />
           </button>
           <button className="p-2 flex items-center gap-x-2 bg-black opacity-75 text-black text-sm font-semibold border border-white rounded-full  transition hover:opacity-90 cursor-pointer">
             <ChevronDown

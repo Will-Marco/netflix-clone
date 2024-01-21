@@ -49,11 +49,7 @@ const Page = () => {
           data: item.data.map((movie: MovieProps) => ({
             ...movie,
             type: "tv",
-            addedToFavorites: favourites.length
-              ? favourites
-                  .map((item: FavouriteProps) => item.movieId)
-                  .indexOf(movie.id)
-              : false,
+            addedToFavorites: false,
           })),
         }));
 
@@ -66,11 +62,7 @@ const Page = () => {
           data: item.data.map((movie: MovieProps) => ({
             ...movie,
             type: "movie",
-            addedToFavorites: favourites.length
-              ? favourites
-                  .map((item: FavouriteProps) => item.movieId)
-                  .indexOf(movie.id)
-              : false,
+            addedToFavorites: false,
           })),
         }));
 

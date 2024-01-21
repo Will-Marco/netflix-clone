@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
     if (isExist) {
       return NextResponse.json({
-        success: true,
+        success: false,
         message: "Already added to favorites",
       });
     }

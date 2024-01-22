@@ -74,7 +74,7 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    await Favourite.findByIdAndDelete({ id });
+    await Favourite.findByIdAndDelete(id);
 
     return NextResponse.json({
       success: true,
@@ -83,7 +83,7 @@ export async function DELETE(req: Request) {
   } catch (error) {
     return NextResponse.json({
       success: false,
-      message: "Something went wrong\n" + error,
+      message: "Something went wrong",
     });
   }
 }

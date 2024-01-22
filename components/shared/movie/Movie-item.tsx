@@ -1,17 +1,24 @@
 import { useGlobalContext } from "@/hook";
-import { MovieProps } from "@/types";
+import { FavouriteProps, MovieProps } from "@/types";
 import { motion } from "framer-motion";
-import { CheckIcon, ChevronDown, PlusIcon } from "lucide-react";
+import { ChevronDown, MinusIcon, PlusIcon } from "lucide-react";
 import CustomImage from "../Custom-image";
 import { toast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import { Dispatch, SetStateAction } from "react";
 
 interface Props {
   movie: MovieProps;
+  favouriteId?: string;
+  setFavourites?: Dispatch<SetStateAction<FavouriteProps[]>>;
 }
 
-export default function MovieItem({ movie }: Props) {
+export default function MovieItem({
+  movie,
+  favouriteId = "",
+  setFavourites,
+}: Props) {
   const { setOpen, setMovie, account } = useGlobalContext();
   const { data: session }: any = useSession();
 
@@ -54,6 +61,36 @@ export default function MovieItem({ movie }: Props) {
     }
   };
 
+  const onRemove = async () => {
+    try {
+      const { data } = await axios.delete(`/api/favourite?id=${favouriteId}`);
+      
+      if (data?.success) {
+        if (setFavourites) {
+          setFavourites((prev: FavouriteProps[]) =>
+            prev.filter((item: FavouriteProps) => item._id !== favouriteId)
+          );
+        }
+        return toast({
+          title: "Success",
+          description: "The Movie removed from your favourite list",
+        });
+      } else {
+        return toast({
+          title: "Error",
+          description: data.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      return toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
@@ -76,7 +113,15 @@ export default function MovieItem({ movie }: Props) {
 
         <div className="p-2 bottom-0 space-x-3 hidden absolute buttonWrapper">
           <button className="p-2 flex items-center gap-x-2 bg-black opacity-75 text-black text-sm font-semibold border border-white rounded-full  transition hover:opacity-90 cursor-pointer">
-            <PlusIcon color="#ffffff" className="h-7 w-7" onClick={onAdd} />
+            {favouriteId?.length ? (
+              <MinusIcon
+                color="#ffffff"
+                className="h-7 w-7"
+                onClick={onRemove}
+              />
+            ) : (
+              <PlusIcon color="#ffffff" className="h-7 w-7" onClick={onAdd} />
+            )}
           </button>
           <button className="p-2 flex items-center gap-x-2 bg-black opacity-75 text-black text-sm font-semibold border border-white rounded-full  transition hover:opacity-90 cursor-pointer">
             <ChevronDown

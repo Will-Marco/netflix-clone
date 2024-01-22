@@ -115,4 +115,7 @@ export interface FavouriteProps {
   poster_path: string;
   movieId: string;
   type: string;
+  title: string;
+  overview: string;
+  _id?: string;
 }

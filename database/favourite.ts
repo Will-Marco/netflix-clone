@@ -8,6 +8,8 @@ const favouriteSchema = new mongoose.Schema(
     poster_path: String,
     movieId: String,
     type: String,
+    title: String,
+    overview: String,
   },
   { timestamps: true }
 );

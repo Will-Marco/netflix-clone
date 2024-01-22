@@ -1,6 +1,6 @@
 // "use client";
 
-import { MovieProps } from "@/types";
+import { FavouriteProps, MovieProps } from "@/types";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AiFillPlayCircle } from "react-icons/ai";

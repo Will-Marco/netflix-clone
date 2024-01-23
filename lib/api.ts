@@ -83,3 +83,14 @@ export const getFavorites = async (uid?: string, accountId?: string) => {
     console.log(error);
   }
 };
+
+export const getSearchResults = async (type: string, query: string) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/search/${type}?api_key=${API_KEY}&include_adult=false&language=en-US&query=${query}`
+    );
+    return data && data.results;
+  } catch (error) {
+    console.log(error);
+  }
+};

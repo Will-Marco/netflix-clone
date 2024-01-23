@@ -49,10 +49,12 @@ export const getMoviesByGenre = async (type: string, id: number) => {
 
 export const getMovieDetails = async (type?: string, id?: number) => {
   try {
-    const { data } = await axios.get(
-      `${BASE_URL}/${type}/${id}?api_key=${API_KEY}&language=en-US&append_to_response=videos`
-    );
-    return data && { data, type };
+    if (id) {
+      const { data } = await axios.get(
+        `${BASE_URL}/${type}/${id}?api_key=${API_KEY}&language=en-US&append_to_response=videos`
+      );
+      return data && { data, type };
+    }
   } catch (error) {
     console.log(error);
   }
@@ -60,10 +62,12 @@ export const getMovieDetails = async (type?: string, id?: number) => {
 
 export const getSimilarMovie = async (type?: string, id?: number) => {
   try {
-    const { data } = await axios.get(
-      `${BASE_URL}/${type}/${id}/similar?api_key=${API_KEY}&language=en-US`
-    );
-    return data && data.results;
+    if (id) {
+      const { data } = await axios.get(
+        `${BASE_URL}/${type}/${id}/similar?api_key=${API_KEY}&language=en-US`
+      );
+      return data && data.results;
+    }
   } catch (error) {
     console.log(error);
   }

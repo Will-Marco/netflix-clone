@@ -1,12 +1,12 @@
 import { useGlobalContext } from "@/hook";
 import { FavouriteProps, MovieProps } from "@/types";
 import { motion } from "framer-motion";
-import { ChevronDown, MinusIcon, PlusIcon } from "lucide-react";
+import { ChevronDown, Loader2, MinusIcon, PlusIcon } from "lucide-react";
 import CustomImage from "../Custom-image";
 import { toast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 interface Props {
   movie: MovieProps;
@@ -19,8 +19,10 @@ export default function MovieItem({
   favouriteId = "",
   setFavourites,
 }: Props) {
+  const [isLoading, setIsLoading] = useState(false);
   const { setOpen, setMovie, account } = useGlobalContext();
   const { data: session }: any = useSession();
+
 
   const onHandlePopup = () => {
     setMovie(movie);
@@ -29,6 +31,7 @@ export default function MovieItem({
 
   const onAdd = async () => {
     try {
+      setIsLoading(true);
       const { data } = await axios.post("/api/favourite", {
         uid: session?.user?.uid,
         accountId: account?._id,
@@ -58,13 +61,16 @@ export default function MovieItem({
         description: "Something went wrong",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const onRemove = async () => {
     try {
+      setIsLoading(true);
       const { data } = await axios.delete(`/api/favourite?id=${favouriteId}`);
-      
+
       if (data?.success) {
         if (setFavourites) {
           setFavourites((prev: FavouriteProps[]) =>
@@ -88,6 +94,8 @@ export default function MovieItem({
         description: "Something went wrong",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -113,7 +121,9 @@ export default function MovieItem({
 
         <div className="p-2 bottom-0 space-x-3 hidden absolute buttonWrapper">
           <button className="p-2 flex items-center gap-x-2 bg-black opacity-75 text-black text-sm font-semibold border border-white rounded-full  transition hover:opacity-90 cursor-pointer">
-            {favouriteId?.length ? (
+            {isLoading ? (
+              <Loader2 color="#ffffff" className="h-7 w-7 animate-spin" />
+            ) : favouriteId?.length ? (
               <MinusIcon
                 color="#ffffff"
                 className="h-7 w-7"

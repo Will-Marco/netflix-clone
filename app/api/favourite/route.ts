@@ -15,7 +15,16 @@ export async function POST(req: Request) {
 
     const body: FavouriteProps = await req.json();
 
-    const { uid, accountId, backdrop_path, poster_path, movieId, type } = body;
+    const {
+      uid,
+      accountId,
+      backdrop_path,
+      poster_path,
+      movieId,
+      type,
+      overview,
+      title,
+    } = body;
 
     const isExist = await Favourite.findOne({ uid, movieId, accountId });
 
@@ -33,6 +42,8 @@ export async function POST(req: Request) {
       poster_path,
       movieId,
       type,
+      overview,
+      title,
     });
 
     return NextResponse.json({ success: true, data: favorites });

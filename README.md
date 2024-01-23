@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<h1 align="center" id="title">Discover Seamless Streaming: Netflix Clone with NextJS, ReactJS, TypeScript, TailwindCSS, NodeJS, ExpressJS & Nextauth, TMDb-API</h1>
 
-## Getting Started
 
-First, run the development server:
+<p id="description">Indulge in our Netflix clone: ultra-fast streaming tailored recommendations and sleek design. Dive into movies and shows effortlessly—your gateway to entertainment perfection!</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+<h2>🧐 Features</h2>
+
+Here're some of the project's best features:
+
+*   User Authentication
+*   Content Management
+*   Search and Filters
+*   User Interaction:
+*   Social Integration
+
+<h2>🛠️ Installation Steps:</h2>
+
+<p>1. Install all dependencies</p>
+
+```
+npm install | yarn install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<p>2. Run application</p>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm run dev | yarn dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+<p>3. Write your own environment values</p>
 
-## Learn More
+```
+.env
+```
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+<h2>💻 Built with</h2>
 
-## Deploy on Vercel
+Technologies used in the project:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+*   NextJS 14v
+*   ReactJS
+*   TypeScript
+*   NodeJS
+*   ExpressJS
+*   MongoDB
+*   Mongoose
+*   TailwindCSS
+*   TMDb-API

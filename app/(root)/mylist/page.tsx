@@ -104,7 +104,7 @@ export default function MyList() {
                         favouriteId={fav?._id}
                         setFavourites={setFavourites}
                       />
-                    ))}
+                    )).reverse()}
                 </div>
               </div>
             </div>

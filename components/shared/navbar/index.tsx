@@ -80,6 +80,10 @@ export default function Navbar() {
             height={120}
             alt="NETFLIX"
             className="object-contain cursor-pointer"
+            onClick={() => {
+              router.push("/");
+              setPageLoader(true);
+            }}
           />
           <ul className="md:flex md:space-x-4 hidden">
             {MenuItem.map((item) => (

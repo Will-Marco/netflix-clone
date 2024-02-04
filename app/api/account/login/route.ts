@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/lib/mongoose";
 import Account from "@/database/account";
 import { compare } from "bcryptjs";
 
-export const dynamic = "froce-dynamic";
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {

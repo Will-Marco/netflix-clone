@@ -3,9 +3,7 @@ import { connectToDatabase } from "@/lib/mongoose";
 import { FavouriteProps } from "@/types";
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
-
-console.log(dynamic);
+// export const dynamic = "force-dynamic";
 
 // Post a new favourite
 
